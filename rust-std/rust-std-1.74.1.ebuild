@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..12} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic multiprocessing python-any-r1 rust-toolchain toolchain-funcs
 
@@ -25,7 +25,7 @@ BDEPEND="
 DEPEND="||
 	(
 		>="${CATEGORY}"/gcc-4.7:*
-		>="${CATEGORY}"/clang-3.5:*
+		>="${CATEGORY/sys-devel/llvm-core}"/clang-3.5:*
 	)
 "
 
@@ -76,7 +76,8 @@ src_configure() {
 
 	local rust_root x
 	rust_root="$(rustc --print sysroot)"
-	rtarget="riscv64gc-unknown-none-elf"
+	rtarget="$(rust_abi ${CTARGET})"
+	rtarget="${ERUST_STD_RTARGET:-${rtarget}}" # some targets need to be custom.
 	rbuild="$(rust_abi ${CBUILD})"
 	rhost="$(rust_abi ${CHOST})"
 
@@ -86,8 +87,6 @@ src_configure() {
 	done
 
 	cat <<- EOF > "${S}"/config.toml
-		[llvm]
-		download-ci-llvm = false
 		[build]
 		build = "${rbuild}"
 		host = ["${rhost}"]
@@ -100,7 +99,7 @@ src_configure() {
 		vendor = true
 		extended = true
 		verbose = 2
-		cargo-native-static = true
+		cargo-native-static = false
 		[install]
 		prefix = "${EPREFIX}/usr/lib/${PN}/${PV}"
 		sysconfdir = "etc"
@@ -130,7 +129,7 @@ src_configure() {
 		cxx = "$(tc-getCXX ${CTARGET})"
 		linker = "$(tc-getCC ${CTARGET})"
 		ranlib = "$(tc-getRANLIB ${CTARGET})"
-		crt-static = true
+		$(usev elibc_musl 'crt-static = false')
 	EOF
 
 	einfo "${PN^} configured with the following settings:"
