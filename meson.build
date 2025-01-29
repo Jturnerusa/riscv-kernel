@@ -10,17 +10,17 @@ sources = [
   'src/kprint.rs'
 ]
 
-flags = ['-C', 'panic=abort']
+rustflags = ['-C', 'panic=abort']
 
 if get_option('qemu').enabled()
-  flags += ['--cfg', 'qemu']  
+  rustflags += ['--cfg', 'qemu']  
 endif
 
 libkernel = static_library(
   'kernel',
   sources,
   rust_crate_type: 'staticlib',
-  rust_args: flags,
+  rust_args: rustflags,
   dependencies: [bitflags]
 )
 
