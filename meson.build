@@ -1,4 +1,8 @@
-project('riscv', ['rust', 'c'])
+project(
+  'riscv',
+  ['rust', 'c'],
+  meson_version: '>=1.6.1'
+)
 
 link_script = meson.source_root() + '/link.ld'
 
