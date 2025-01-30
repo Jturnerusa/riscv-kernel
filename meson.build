@@ -12,7 +12,8 @@ bitflags = dependency('bitflags-2-rs')
 sources = [
   'src/lib.rs',
   'src/uart.rs',
-  'src/kprint.rs'
+  'src/kprint.rs',
+  'src/kalloc.rs'
 ]
 
 rustflags = ['-C', 'panic=abort']

@@ -3,11 +3,14 @@
 
 #[macro_use]
 mod kprint;
+mod kalloc;
 mod uart;
 
+const PAGE_SIZE: usize = 4096;
+
 extern "C" {
-    static heap_start: *const ();
-    static heap_end: *const ();
+    static heap_start: ();
+    static heap_end: ();
 }
 
 #[no_mangle]
