@@ -14,7 +14,7 @@ pub unsafe fn init() {
 
     let pages = heap_len / PAGE_SIZE;
 
-    let last_page = (pages * PAGE_SIZE + heap_start) as *mut u8;
+    let last_page = ((pages - 1) * PAGE_SIZE + heap_start) as *mut u8;
 
     last_page.cast::<FreeList>().write(FreeList { next: None });
 
