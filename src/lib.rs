@@ -1,10 +1,10 @@
 #![no_std]
 #![allow(dead_code)]
 
+mod kalloc;
 #[macro_use]
 mod kprint;
-mod kalloc;
-mod uart;
+mod sbi;
 
 const PAGE_SIZE: usize = 4096;
 
@@ -15,6 +15,7 @@ extern "C" {
 
 #[no_mangle]
 unsafe extern "C" fn kmain() -> ! {
+    kprintln!("starting kernel");
     loop {}
 }
 
