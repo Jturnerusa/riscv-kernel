@@ -2,7 +2,7 @@
         .global start
 
 start:
-        la sp, stack_top
+        la sp, heap_start
         la gp, global_pointer
 
 
