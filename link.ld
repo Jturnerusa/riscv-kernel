@@ -1,6 +1,6 @@
 ENTRY(start);
 
-. = 0x80000000;
+. = 0x80200000;
 
 SECTIONS {
 	.text : ALIGN(4K) {

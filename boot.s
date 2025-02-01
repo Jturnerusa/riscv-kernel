@@ -2,7 +2,6 @@
         .global start
 
 start:
-        csrw satp, 0
         la sp, stack_top
         la gp, global_pointer
 
@@ -14,5 +13,4 @@ bss_clear_loop:
         addi t5, t5, 8
         bltu t5, t6, bss_clear_loop
 
-        la t0, kmain
         tail kmain
