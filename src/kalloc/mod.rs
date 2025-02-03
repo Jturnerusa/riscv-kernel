@@ -1,1 +1,1 @@
-mod bump;
+pub mod bump;
