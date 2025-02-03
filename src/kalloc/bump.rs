@@ -42,7 +42,7 @@ unsafe impl<'a> core::alloc::Allocator for Allocator<'a> {
 
         self.bp.set(self.bp.get().checked_add(needed).unwrap());
         self.allocations
-            .set(self.allocations.get().checked_sub(1).unwrap());
+            .set(self.allocations.get().checked_add(1).unwrap());
 
         Ok(slice)
     }
