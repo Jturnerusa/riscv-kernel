@@ -35,11 +35,14 @@ unsafe impl<'a> core::alloc::Allocator for Allocator<'a> {
         }
 
         let aligned_ptr = unsafe { NonNull::new(p.add(p.align_offset(layout.align()))).unwrap() };
+
+        debug_assert!(aligned_ptr.is_aligned_to(layout.align()));
+
         let slice = NonNull::slice_from_raw_parts(aligned_ptr, layout.size());
 
         self.bp.set(self.bp.get().checked_add(needed).unwrap());
         self.allocations
-            .set(self.allocations.get().checked_sub(1).unwrap());
+            .set(self.allocations.get().checked_add(1).unwrap());
 
         Ok(slice)
     }
