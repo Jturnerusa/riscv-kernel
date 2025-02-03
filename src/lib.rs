@@ -1,5 +1,6 @@
 #![no_std]
 #![allow(dead_code)]
+#![feature(allocator_api, alloc_layout_extra, pointer_is_aligned_to)]
 
 mod kalloc;
 #[macro_use]
