@@ -13,6 +13,7 @@ sources = [
   'src/lib.rs',
   'src/kprint.rs',
   'src/kalloc.rs',
+  'src/vm.rs',
   'src/sbi/mod.rs',
   'src/sbi/console.rs'
 ]
