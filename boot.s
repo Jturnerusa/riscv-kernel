@@ -7,7 +7,7 @@ start:
 
 
         la t5, bss_start
-        la t6, bss_end
+        la t6, heap_end
 bss_clear_loop: 
         sd zero, (t5)
         addi t5, t5, 8
