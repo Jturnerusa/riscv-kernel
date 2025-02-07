@@ -11,6 +11,7 @@ bitflags = dependency('bitflags-2-rs')
 
 sources = [
   'src/lib.rs',
+  'src/vm.rs',
   'src/kprint.rs',
   'src/kalloc/mod.rs',
   'src/kalloc/bump.rs',
