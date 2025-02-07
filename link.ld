@@ -22,12 +22,12 @@ SECTIONS {
 	.bss : ALIGN(4K) {
 		PROVIDE(bss_start = .);
 		*(.bss*);
+		PROVIDE(bss_end = .);                
 		PROVIDE(stack_top = .);
 		. += 4M;
 		PROVIDE(heap_start = .);
 		. += 64M;
 		PROVIDE(heap_end = .);
 		PROVIDE(global_pointer = .);
-		PROVIDE(bss_end = .);
 	}
 }
