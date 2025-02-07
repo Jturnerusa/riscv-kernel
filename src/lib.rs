@@ -104,7 +104,7 @@ unsafe fn map_kernel_memory(
         root,
         allocator,
         (&raw const bss_start).addr(),
-        (&raw const bss_end).addr(),
+        (&raw const heap_end).addr(),
         PageEntryFlag::READ | PageEntryFlag::WRITE,
     )?;
 
