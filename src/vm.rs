@@ -1,15 +1,7 @@
 use core::alloc::{AllocError, Allocator};
 
-use crate::PAGE_SIZE;
 use alloc::boxed::Box;
 use bitflags::bitflags;
-
-pub trait Address {
-    fn addr(self) -> usize;
-}
-
-#[derive(Clone, Copy, Debug)]
-pub struct Page<T>(T);
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
@@ -43,42 +35,6 @@ bitflags! {
 #[derive(Clone, Copy, Debug)]
 pub struct PageTable {
     entries: [Entry; 512],
-}
-
-impl<T: Clone + Copy + Address> Page<T> {
-    pub fn new(addr: T) -> Option<Self> {
-        if addr.addr() % PAGE_SIZE == 0 {
-            Some(Self(addr))
-        } else {
-            None
-        }
-    }
-}
-
-impl<T: Clone + Copy> Page<T> {
-    pub fn get(self) -> T {
-        self.0
-    }
-}
-
-impl Default for PageTable {
-    fn default() -> Self {
-        Self {
-            entries: [Entry(0); 512],
-        }
-    }
-}
-
-impl Address for PhysicalAddress {
-    fn addr(self) -> usize {
-        self.0
-    }
-}
-
-impl Address for VirtualAddress {
-    fn addr(self) -> usize {
-        self.0
-    }
 }
 
 impl VirtualAddress {
@@ -164,12 +120,20 @@ impl Entry {
 }
 
 impl Ppn {
+    pub fn new(ppn: usize) -> Self {
+        Self(ppn)
+    }
+
     pub fn get(self) -> usize {
         self.0
     }
 
-    pub fn into_paddr(self) -> PhysicalAddress {
-        PhysicalAddress(self.0 << 12)
+    pub fn from_addr(addr: usize) -> Self {
+        Self(addr >> 12)
+    }
+
+    pub fn into_addr(self) -> usize {
+        self.0 << 12
     }
 }
 
@@ -177,23 +141,31 @@ impl PageTable {
     pub unsafe fn map(
         &mut self,
         allocator: &impl Allocator,
-        vaddr: Page<VirtualAddress>,
-        paddr: Page<PhysicalAddress>,
+        vaddr: Ppn,
+        paddr: Ppn,
         flags: PageEntryFlag,
     ) -> Result<(), AllocError> {
         map(self, allocator, vaddr, paddr, flags, 2)
     }
 }
 
+impl Default for PageTable {
+    fn default() -> Self {
+        Self {
+            entries: [Entry(0); 512],
+        }
+    }
+}
+
 unsafe fn map(
     table: &mut PageTable,
     allocator: &impl Allocator,
-    vaddr: Page<VirtualAddress>,
-    paddr: Page<PhysicalAddress>,
+    vaddr: Ppn,
+    paddr: Ppn,
     flags: PageEntryFlag,
     level: usize,
 ) -> Result<(), AllocError> {
-    let vpn = vaddr.get().vpn()[level];
+    let vpn = VirtualAddress::new(vaddr.into_addr()).vpn()[level];
     let entry = table.entries[vpn];
 
     if !entry.is_valid() && level > 0 {
@@ -207,11 +179,11 @@ unsafe fn map(
     let entry = table.entries[vpn];
 
     if level == 0 {
-        table.entries[vpn] = Entry::new_leaf(paddr.get().ppn(), flags);
+        table.entries[vpn] = Entry::new_leaf(paddr, flags);
 
         Ok(())
     } else {
-        let next = (entry.ppn().into_paddr().get() as *mut PageTable)
+        let next = (entry.ppn().into_addr() as *mut PageTable)
             .as_mut()
             .unwrap();
 

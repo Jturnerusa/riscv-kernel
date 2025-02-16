@@ -11,7 +11,7 @@ use core::{
     arch::asm,
     slice,
 };
-use vm::{Page, PageEntryFlag, PageTable, PhysicalAddress, VirtualAddress};
+use vm::{PageEntryFlag, PageTable, PhysicalAddress, Ppn, VirtualAddress};
 
 mod kalloc;
 #[macro_use]
@@ -119,8 +119,8 @@ unsafe fn identity_map_range(
     flags: PageEntryFlag,
 ) -> Result<(), AllocError> {
     for p in (start..end).step_by(PAGE_SIZE) {
-        let vaddr = Page::new(VirtualAddress::new(p)).unwrap();
-        let paddr = Page::new(PhysicalAddress::new(p)).unwrap();
+        let vaddr = Ppn::from_addr(p);
+        let paddr = Ppn::from_addr(p);
 
         root.map(allocator, vaddr, paddr, flags)?;
     }
