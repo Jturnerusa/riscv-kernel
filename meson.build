@@ -5,7 +5,7 @@ project(
   default_options: {'rust_std': '2021'}
 )
 
-link_script = meson.source_root() + '/link.ld'
+link_script = 'link.ld'
 
 bitflags = dependency('bitflags-2-rs')
 
