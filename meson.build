@@ -9,7 +9,7 @@ link_script = meson.source_root() + '/link.ld'
 
 bitflags = dependency('bitflags-2-rs')
 
-sources = [
+sources = files(
   'src/lib.rs',
   'src/vm.rs',
   'src/kprint.rs',
@@ -17,7 +17,7 @@ sources = [
   'src/kalloc/bump.rs',
   'src/sbi/mod.rs',
   'src/sbi/console.rs'
-]
+)
 
 rustflags = ['-C', 'panic=abort']
 
